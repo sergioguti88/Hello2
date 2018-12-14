@@ -1,41 +1,30 @@
-pipeline { 
+pipeline {
+    agent {
+        docker {
+            image 'azagramac/maven'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
     stages {
-      stage ('HelloWorld') {
-        agent {
-          docker { image 'sergioguti/prueba' }
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
         }
-        steps {
-              sh "echo 'Hello World'"
-            sh "env"
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
-        post {
-          success {
-            echo 'Se ha saludado correctamente'
-          }
-          failure {
-            echo 'Se ha producido error en el saludo :D'
-          }
-      }
-      }
-
-      stage ('NPM compile') {
-        agent {
-          docker { image 'sergioguti/prueba' }
+        stage('Deliver') {
+            steps {
+                sh './jenkins/scripts/deliver.sh'
+            }
         }
-        steps {
-          script {
-            libreria.compile 'prueba'
-          }
-        }
-        post {
-          success {
-            echo 'Se ha descargado el repositorio'
-          }
-          failure {
-            echo 'Se ha producido error en el saludo :D'
-          }
-      }
-      }
-      
     }
 }
