@@ -1,13 +1,8 @@
 pipeline { 
-    agent {
-        node { 
-            label 'slave-azure' 
-        } 
-    }
     stages {
       stage ('HelloWorld') {
         agent {
-          docker { image 'jtoledog/compiladorjs' }
+          docker { image 'sergioguti/prueba' }
         }
         steps {
               sh "echo 'Hello World'"
@@ -25,7 +20,7 @@ pipeline {
 
       stage ('NPM compile') {
         agent {
-          docker { image 'jtoledog/compiladorjs' }
+          docker { image 'sergioguti/prueba' }
         }
         steps {
           script {
